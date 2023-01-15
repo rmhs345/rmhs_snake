@@ -1,0 +1,64 @@
+html, body {
+    margin: 0;
+    height: 100%;
+    min-height: 100%;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column; 
+}
+
+footer {
+    padding-top: 1em;
+}
+
+.game {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+} 
+
+.board {
+     /* 
+        15 x 15 cells 
+        32px per block
+    */ 
+    width: 480px;
+    height: 480px;
+
+    /* 
+        Due to the nature of repeating-conic-gradient
+        There are 15x15 block @ 32pxs in 7 different background-size boxs on the x and y axis
+        https://css-tricks.com/background-patterns-simplified-by-conic-gradients/#checkerboard
+    */
+    background: repeating-conic-gradient(#808080 0% 25%, white 0% 50%); 
+    background-size: 64px 64px; /* background-size box */
+    border-radius: 1%;
+    border-style: solid;
+}
+
+.board-animation {
+    animation: floater;
+    animation-duration: var(--animation-speed);
+}
+
+/* Animation variables */
+:root {
+    --random-x: 0%;
+    --random-y: 0%;
+    --animation-speed: 5s;
+}
+
+@keyframes floater {
+    0% { 
+        transform: translate(0%, 0%);
+        transition: ease 0.2s;
+    }
+    50% {
+        transform: translate(var(--random-x), var(--random-y));
+        transition: ease 0.2s;
+    }
+}

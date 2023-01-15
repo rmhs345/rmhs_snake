@@ -1,0 +1,12 @@
+RMHS Snake
+
+todo ---------------------------------
+- Player movement
+- Player Wall collisions
+
+working on ---------------------------------
+
+bugs ---------------------------------
+
+done ---------------------------------
+- Player board
