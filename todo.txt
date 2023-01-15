@@ -1,10 +1,10 @@
 RMHS Snake
 
 todo ---------------------------------
-- Player movement
 - Player Wall collisions
 
 working on ---------------------------------
+- Player movement
 
 bugs ---------------------------------
 

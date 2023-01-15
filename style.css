@@ -9,6 +9,8 @@ body {
     align-items: center;
     justify-content: center;
     flex-direction: column; 
+    background: repeating-conic-gradient(rgba(0, 0, 0, 0.05) 0% 25%, rgba(255, 255, 255, 0.05) 0% 50%); 
+    background-size: 64px 64px; /* background-size box */
 }
 
 footer {
@@ -20,6 +22,10 @@ footer {
     align-items: center;
     justify-content: center;
 } 
+
+footer span {
+    font-weight: bold;
+}
 
 .board {
      /* 
@@ -37,7 +43,8 @@ footer {
     background: repeating-conic-gradient(#808080 0% 25%, white 0% 50%); 
     background-size: 64px 64px; /* background-size box */
     border-radius: 1%;
-    border-style: solid;
+    border: 32px ridge;
+
 }
 
 .board-animation {

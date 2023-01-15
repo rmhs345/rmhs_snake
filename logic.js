@@ -6,8 +6,8 @@ window.addEventListener('load', () => {
     // Create the background shade for the board
     let shade = (() => {
         let shadeElement = document.createElement('div');
-        shadeElement.style.width = '480px';
-        shadeElement.style.height = '480px';
+        shadeElement.style.width = '540px';
+        shadeElement.style.height = '540px';
         shadeElement.style.backgroundColor = '#2b1515';
         shadeElement.style.position = 'absolute';
         shadeElement.style.zIndex = '-1';
