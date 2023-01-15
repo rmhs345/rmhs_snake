@@ -1,7 +1,12 @@
 RMHS Snake
 
 todo ---------------------------------
-- Player Wall collisions
+- Player sprite
+- Player movement
+- Player growth
+- Player collision (Wall and itself)
+- Score
+- Polish Polish Polish
 
 working on ---------------------------------
 - Player movement
