@@ -1,8 +1,6 @@
 RMHS Snake
 
 todo ---------------------------------
-- Player sprite
-- Player movement
 - Player growth
 - Player collision (Wall and itself)
 - Score
@@ -15,3 +13,4 @@ bugs ---------------------------------
 
 done ---------------------------------
 - Player board
+- Player sprite

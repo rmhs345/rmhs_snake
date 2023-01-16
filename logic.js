@@ -1,4 +1,21 @@
 window.addEventListener('load', () => {
+    let gameBoard = [
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', 'apple', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', 'apple', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', 'body', 'body', 'head', ''],        
+    ]
     const game = document.querySelector('.game');
     const board = document.querySelector('.board');
     let randomValue = 5;
@@ -48,6 +65,8 @@ window.addEventListener('load', () => {
             board.classList.add('board-animation');
         },1);   
     }
+
+    drawBoard(gameBoard, board);
 }, false);
     
 /*
@@ -56,6 +75,65 @@ window.addEventListener('load', () => {
 function getRandomInt(max) {
     let sign = Math.random() > 0.5 ? 1 : -1;
     let value = Math.random() * max;
-    console.log(sign);
     return (Math.floor(value) * (Math.random() + 0.25)) * sign;
+}
+
+function drawBoard(currentBoardState, board) {
+    // Iterate through the board
+    for (let i = 0; i < 15; i++) {
+        for (let j = 0; j < 15; j++) {
+            // Draw each of the elements to the screen
+            switch (currentBoardState[i][j]) {
+                case "head":
+                    let snakeHead = createSnakeHead();
+                    snakeHead.style.top = (32 * i) + 'px'
+                    snakeHead.style.left = (32 * j) + 'px'
+                    board.append(snakeHead);
+                break;
+                case "body":
+                    let snakeBody = createSnakeBody();
+                    snakeBody.style.top = (32 * i) + 'px'
+                    snakeBody.style.left = (32 * j) + 'px'
+                    board.append(snakeBody);
+                break;
+                case "apple":
+                    let apple = createApple();
+                    apple.style.top = (32 * i) + 'px'
+                    apple.style.left = (32 * j) + 'px'
+                    board.append(apple);
+                break;
+                default:
+            }
+        }
+    }
+}
+
+function createSnakeHead() {
+    let snakeHead = document.createElement('div');
+    snakeHead.style.width = '32px';
+    snakeHead.style.height = '32px';
+    snakeHead.style.backgroundColor = '#a9fc03';
+    snakeHead.style.position = 'absolute';
+    snakeHead.style.borderRadius = '1%'
+    return snakeHead;
+}
+
+function createSnakeBody() {
+    let snakeBody = document.createElement('div');
+    snakeBody.style.width = '32px';
+    snakeBody.style.height = '32px';
+    snakeBody.style.backgroundColor = '#96bf36';
+    snakeBody.style.position = 'absolute';
+    snakeBody.style.borderRadius = '1%'
+    return snakeBody;
+}
+
+function createApple() {
+    let snakeBody = document.createElement('div');
+    snakeBody.style.width = '32px';
+    snakeBody.style.height = '32px';
+    snakeBody.style.backgroundColor = '#e36275';
+    snakeBody.style.position = 'absolute';
+    snakeBody.style.borderRadius = '30%'
+    return snakeBody;
 }

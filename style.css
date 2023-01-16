@@ -42,9 +42,9 @@ footer span {
     */
     background: repeating-conic-gradient(#808080 0% 25%, white 0% 50%); 
     background-size: 64px 64px; /* background-size box */
-    border-radius: 1%;
+    border-radius: 5%;
     border: 32px ridge;
-
+    position: relative;
 }
 
 .board-animation {
