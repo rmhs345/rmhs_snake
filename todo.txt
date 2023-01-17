@@ -1,13 +1,14 @@
 RMHS Snake
 
 todo ---------------------------------
-- Player growth
+
 - Player collision (Wall and itself)
 - Score
 - Polish Polish Polish
 
 working on ---------------------------------
 - Player movement
+- Player growth
 
 bugs ---------------------------------
 
