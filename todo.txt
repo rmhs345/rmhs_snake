@@ -1,17 +1,18 @@
 RMHS Snake
 
 todo ---------------------------------
-
+- Automovement
 - Player collision (Wall and itself)
-- Score
 - Polish Polish Polish
 
 working on ---------------------------------
-- Player movement
-- Player growth
+- Snake bodies
 
 bugs ---------------------------------
 
 done ---------------------------------
 - Player board
 - Player sprite
+- Player growth
+- Score
+- Player movement

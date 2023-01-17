@@ -1,5 +1,6 @@
 let gameBoard = "";
 let snake = "";
+let playerScore = 0;
 
 window.addEventListener('load', () => {
     snake = createSnakeHead();
@@ -22,6 +23,7 @@ window.addEventListener('load', () => {
     ]
     const game = document.querySelector('.game');
     const board = document.querySelector('.board');
+    let score = document.querySelector('.score');
     let randomValue = 5;
 
     // Create the background shade for the board
@@ -38,7 +40,7 @@ window.addEventListener('load', () => {
 
 
     // Add the movement
-    document.addEventListener('keydown', (e) => moveSnake(e, gameBoard));
+    document.addEventListener('keydown', (e) => moveSnake(e, gameBoard, score));
 
     game.append(shade);
 
@@ -97,26 +99,21 @@ function drawBoard(currentBoardState, board) {
     for (let i = 0; i < 15; i++) {
         for (let j = 0; j < 15; j++) {
             // Draw each of the elements to the screen
-            switch (currentBoardState[i][j]) {
-                case "head":
-                    let snakeHead = snake.head.element;
-                    snakeHead.style.top = (32 * i) + 'px'
-                    snakeHead.style.left = (32 * j) + 'px'
-                    board.append(snakeHead);
-                break;
-                case "body":
-                    let snakeBody = createSnakeBody();
-                    snakeBody.style.top = (32 * i) + 'px'
-                    snakeBody.style.left = (32 * j) + 'px'
-                    board.append(snakeBody);
-                break;
-                case "apple":
-                    let apple = createApple();
-                    apple.style.top = (32 * i) + 'px'
-                    apple.style.left = (32 * j) + 'px'
-                    board.append(apple);
-                break;
-                default:
+            if (currentBoardState[i][j] == 'head') {
+                let snakeHead = snake.head.element;
+                snakeHead.style.top = (32 * i) + 'px'
+                snakeHead.style.left = (32 * j) + 'px'
+                board.append(snakeHead);
+            } else if (currentBoardState[i][j].includes('body')) {
+                let snakeBody = snake.body[currentBoardState[i][j].charAt(4)].element;
+                snakeBody.style.top = (32 * i) + 'px'
+                snakeBody.style.left = (32 * j) + 'px'
+                board.append(snakeBody);
+            } else if (currentBoardState[i][j] == 'apple') {
+                let apple = createApple();
+                apple.style.top = (32 * i) + 'px'
+                apple.style.left = (32 * j) + 'px'
+                board.append(apple);
             }
         }
     }
@@ -128,50 +125,63 @@ function clearBoard(board) {
     }
 }
 
-function moveSnake(event, currentBoardState) {
-    let snakeHead = snake.head; 
+function moveSnake(event, currentBoardState, scoreElement) {
+    let nextMovement = {
+        x: 0,
+        y: 0
+    };
+    let movementKeyTouched = false;
+
     // https://stackoverflow.com/a/5597114
     switch(event.key) {
         case 'ArrowLeft': 
             // left
-            if (checkInBounds(snake.head.x, snake.head.y - 1)) {
-                currentBoardState = updateBoard(snake.head.x, snake.head.y, "", currentBoardState);
-                currentBoardState = updateBoard(snake.head.x, snake.head.y - 1, "head", currentBoardState);
-                updateSnakeHeadLocation(currentBoardState);
-            } else {
-                console.log("Not in bounds")
-            }
+            nextMovement.x = snake.head.x;
+            nextMovement.y = snake.head.y - 1;
+            snake.head.direction = "left";
+            movementKeyTouched = true;
         break;
         case 'ArrowRight': 
             // right
-            if (checkInBounds(snake.head.x, snake.head.y + 1)) {
-                currentBoardState = updateBoard(snake.head.x, snake.head.y, "", currentBoardState);
-                currentBoardState = updateBoard(snake.head.x, snake.head.y + 1, "head", currentBoardState);
-                updateSnakeHeadLocation(currentBoardState);
-            } else {
-                console.log("Not in bounds")
-            }
+            nextMovement.x = snake.head.x;
+            nextMovement.y = snake.head.y + 1;
+            snake.head.direction = "right";
+            movementKeyTouched = true;
         break;
         case 'ArrowUp': 
             // up
-            if (checkInBounds(snake.head.x - 1, snake.head.y)) {
-                currentBoardState = updateBoard(snake.head.x, snake.head.y, "", currentBoardState);
-                currentBoardState = updateBoard(snake.head.x - 1, snake.head.y, "head", currentBoardState);
-                updateSnakeHeadLocation(currentBoardState);
-            } else {
-                console.log("Not in bounds")
-            }
+            nextMovement.x = snake.head.x - 1;
+            nextMovement.y = snake.head.y;
+            snake.head.direction = "up";
+            movementKeyTouched = true;
         break;
         case 'ArrowDown': 
             // down
-            if (checkInBounds(snake.head.x + 1, snake.head.y)) {
-                currentBoardState = updateBoard(snake.head.x, snake.head.y, "", currentBoardState);
-                currentBoardState = updateBoard(snake.head.x + 1, snake.head.y, "head", currentBoardState);
-                updateSnakeHeadLocation(currentBoardState);
-            } else {
-                console.log("Not in bounds")
-            }
+            nextMovement.x = snake.head.x + 1;
+            nextMovement.y = snake.head.y;
+            snake.head.direction = "down";
+            movementKeyTouched = true;
         break;
+    }
+
+    if(checkInBounds(nextMovement.x, nextMovement.y) && movementKeyTouched) {
+        if (checkIfApple(nextMovement.x, nextMovement.y, currentBoardState)) {
+            // Gobbling an apple
+            playerScore += 1;
+            scoreElement.innerText = "score: " + playerScore;
+            playerGrowth();
+        }
+
+        if(snake.body.length < 1) {
+            currentBoardState = updateBoard(snake.head.x, snake.head.y, "", currentBoardState);
+        } else {
+            currentBoardState = updateBoard(snake.head.x, snake.head.y, "body" + (snake.body.length - 1), currentBoardState);
+        }
+        
+        currentBoardState = updateBoard(nextMovement.x, nextMovement.y, "head", currentBoardState);
+        updateSnakeHeadLocation(currentBoardState);
+    } else {
+        console.log("Not in bounds")
     }
 }
 
@@ -201,16 +211,27 @@ function checkInBounds(x, y) {
     return true;
 }
 
+function checkIfApple(x, y, currentBoardState) {
+    if (currentBoardState[x][y] == "apple") return true;
+
+    return false;
+}
+
 function updateBoard(x, y, type, currentBoardState) {
     currentBoardState[x][y] = type;
     this.board = currentBoardState;
     return this.board;
 }
 
+function playerGrowth() {
+    snake.body.push(createSnakeBody());
+}
+
 function createSnakeHead() {
     let snake = {
         head: {
             element: "",
+            direction: "",
             x: 0,
             y: 0
         },
@@ -230,12 +251,19 @@ function createSnakeHead() {
 }
 
 function createSnakeBody() {
-    let snakeBody = document.createElement('div');
-    snakeBody.style.width = '32px';
-    snakeBody.style.height = '32px';
-    snakeBody.style.backgroundColor = '#96bf36';
-    snakeBody.style.position = 'absolute';
-    snakeBody.style.borderRadius = '1%'
+    let snakeBody = {
+        element: document.createElement('div'),
+        direction: "",
+        x: 0,
+        y: 0
+    };
+
+    snakeBody.element.style.width = '32px';
+    snakeBody.element.style.height = '32px';
+    snakeBody.element.style.backgroundColor = '#96bf36';
+    snakeBody.element.style.position = 'absolute';
+    snakeBody.element.style.borderRadius = '1%'
+
     return snakeBody;
 }
 
