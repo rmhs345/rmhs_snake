@@ -1,6 +1,7 @@
 let gameBoard = "";
 let snake = "";
-let debug = ""
+let debugDisplay = ""
+let debug = false;
 let playerScore = 0;
 
 window.addEventListener('load', () => {
@@ -25,7 +26,7 @@ window.addEventListener('load', () => {
     const game = document.querySelector('.game');
     const board = document.querySelector('.board');
     let score = document.querySelector('.score');
-    debug = document.querySelector('.debug-board');
+    debugDisplay = document.querySelector('.debug-board');
     let randomValue = 5;
 
     // Create the background shade for the board
@@ -97,27 +98,39 @@ function getRandomInt(max) {
 }
 
 function drawBoard(currentBoardState, board) {
-    while (debug.firstChild) {
-        debug.removeChild(debug.lastChild);
+    if (debug) {
+        while (debugDisplay.firstChild) {
+            debugDisplay.removeChild(debugDisplay.lastChild);
+        }
     }
-
     // Iterate through the board
     for (let i = 0; i < 15; i++) {
-        let p = document.createElement('p');
-        let textNode = JSON.stringify(currentBoardState[i]);
-        p.append(textNode);
-        debug.append(p);
+        if (debug) {
+            let p = document.createElement('p');
+            let textNode = JSON.stringify(currentBoardState[i]);
+            p.append(textNode);
+            debugDisplay.append(p); 
+        }
+        
         for (let j = 0; j < 15; j++) {
             // Draw each of the elements to the screen
             if (currentBoardState[i][j] == 'head') {
                 let snakeHead = snake.head.element;
+                
+                if (debug) {
+                    snakeHead.innerText = "x: " + i + ", y: " + j;
+                }
+
                 snakeHead.style.top = (32 * i) + 'px'
                 snakeHead.style.left = (32 * j) + 'px'
                 board.append(snakeHead);
             } else if (currentBoardState[i][j].includes('body')) {
-                console.log(currentBoardState[i][j].charAt(4));
                 let snakeBody = snake.body[currentBoardState[i][j].charAt(4)].element;
-                //console.log(snakeBody);
+                
+                if (debug) {
+                    snakeBody.innerText = "x: " + i + ", y: " + j;
+                }
+
                 snakeBody.style.top = (32 * i) + 'px'
                 snakeBody.style.left = (32 * j) + 'px'
                 board.append(snakeBody);
@@ -184,6 +197,7 @@ function moveSnake(event, currentBoardState, scoreElement) {
             playerGrowth();
         }
 
+        // Update the board to clear the head of its previous position
         currentBoardState = updateBoard(snake.head.x, snake.head.y, "", currentBoardState);
         currentBoardState = updateBoard(nextMovement.x, nextMovement.y, "head", currentBoardState);
 
@@ -201,13 +215,13 @@ function updateSnakeLocation(currentBoardState, nextMovement) {
 
     snake.head.x = nextMovement.x;
     snake.head.y = nextMovement.y;
-    snake.head.element.innerText = "x: " + snake.head.x + ", y: " + snake.head.y;
-
+   
     if (snake.body.length > 0) {
         // Iterate through the body and pass the x / y to each of the elements
         for (let i = 0; i < snake.body.length; i++) {
             let bodyElement = snake.body[i];
-        
+            
+            // Remove body node from board
             currentBoardState = updateBoard(bodyElement.x, bodyElement.y, "", currentBoardState);
 
             // Store the values
@@ -223,7 +237,7 @@ function updateSnakeLocation(currentBoardState, nextMovement) {
                 bodyElement.y = previousBodyY;
             }
 
-            bodyElement.element.innerText = "x: " + bodyElement.x + ", y: " + bodyElement.y;
+            // Add back body node with updated value         
             currentBoardState = updateBoard(bodyElement.x, bodyElement.y, bodyElement.id, currentBoardState);
             
             // Update the previous values
