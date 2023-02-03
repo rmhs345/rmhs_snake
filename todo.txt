@@ -7,6 +7,7 @@ todo ---------------------------------
 
 working on ---------------------------------
 - Snake bodies
+    - Stop player from moving in the opposite direction when moving
 
 bugs ---------------------------------
 

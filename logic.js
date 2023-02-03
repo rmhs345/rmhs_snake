@@ -1,5 +1,6 @@
 let gameBoard = "";
 let snake = "";
+let debug = ""
 let playerScore = 0;
 
 window.addEventListener('load', () => {
@@ -24,6 +25,7 @@ window.addEventListener('load', () => {
     const game = document.querySelector('.game');
     const board = document.querySelector('.board');
     let score = document.querySelector('.score');
+    debug = document.querySelector('.debug-board');
     let randomValue = 5;
 
     // Create the background shade for the board
@@ -95,8 +97,16 @@ function getRandomInt(max) {
 }
 
 function drawBoard(currentBoardState, board) {
+    while (debug.firstChild) {
+        debug.removeChild(debug.lastChild);
+    }
+
     // Iterate through the board
     for (let i = 0; i < 15; i++) {
+        let p = document.createElement('p');
+        let textNode = JSON.stringify(currentBoardState[i]);
+        p.append(textNode);
+        debug.append(p);
         for (let j = 0; j < 15; j++) {
             // Draw each of the elements to the screen
             if (currentBoardState[i][j] == 'head') {
@@ -105,7 +115,9 @@ function drawBoard(currentBoardState, board) {
                 snakeHead.style.left = (32 * j) + 'px'
                 board.append(snakeHead);
             } else if (currentBoardState[i][j].includes('body')) {
+                console.log(currentBoardState[i][j].charAt(4));
                 let snakeBody = snake.body[currentBoardState[i][j].charAt(4)].element;
+                //console.log(snakeBody);
                 snakeBody.style.top = (32 * i) + 'px'
                 snakeBody.style.left = (32 * j) + 'px'
                 board.append(snakeBody);
@@ -172,31 +184,56 @@ function moveSnake(event, currentBoardState, scoreElement) {
             playerGrowth();
         }
 
-        if(snake.body.length < 1) {
-            currentBoardState = updateBoard(snake.head.x, snake.head.y, "", currentBoardState);
-        } else {
-            currentBoardState = updateBoard(snake.head.x, snake.head.y, "body" + (snake.body.length - 1), currentBoardState);
-        }
-        
+        currentBoardState = updateBoard(snake.head.x, snake.head.y, "", currentBoardState);
         currentBoardState = updateBoard(nextMovement.x, nextMovement.y, "head", currentBoardState);
-        updateSnakeHeadLocation(currentBoardState);
+
+        currentBoardState = updateSnakeLocation(currentBoardState, nextMovement);
     } else {
         console.log("Not in bounds")
     }
 }
 
-function updateSnakeHeadLocation(currentBoardState) {
-    for (let i = 0; i < 15; i++) {
-        for (let j = 0; j < 15; j++) {
-            // Draw each of the elements to the screen
-            if (currentBoardState[i][j] == 'head') {
-                snake.head.x = i;
-                snake.head.y = j;
-                snake.head.element.innerText = "x: " + snake.head.x + ", y: " + snake.head.y;
-            } 
+function updateSnakeLocation(currentBoardState, nextMovement) {
+    let currentSankeX = snake.head.x;
+    let currentSnakeY = snake.head.y;
+    let previousBodyX;
+    let previousBodyY;
+
+    snake.head.x = nextMovement.x;
+    snake.head.y = nextMovement.y;
+    snake.head.element.innerText = "x: " + snake.head.x + ", y: " + snake.head.y;
+
+    if (snake.body.length > 0) {
+        // Iterate through the body and pass the x / y to each of the elements
+        for (let i = 0; i < snake.body.length; i++) {
+            let bodyElement = snake.body[i];
+        
+            currentBoardState = updateBoard(bodyElement.x, bodyElement.y, "", currentBoardState);
+
+            // Store the values
+            let currentBodyX = bodyElement.x;
+            let currentBodyY = bodyElement.y;
+
+            // Override the values
+            if (i == 0) {
+                bodyElement.x = currentSankeX;
+                bodyElement.y = currentSnakeY;
+            } else {
+                bodyElement.x = previousBodyX;
+                bodyElement.y = previousBodyY;
+            }
+
+            bodyElement.element.innerText = "x: " + bodyElement.x + ", y: " + bodyElement.y;
+            currentBoardState = updateBoard(bodyElement.x, bodyElement.y, bodyElement.id, currentBoardState);
+            
+            // Update the previous values
+            previousBodyX = currentBodyX;
+            previousBodyY = currentBodyY;
         }
     }
-    return -1;
+    
+
+    return currentBoardState;
 }
 
 function checkInBounds(x, y) {
@@ -224,7 +261,7 @@ function updateBoard(x, y, type, currentBoardState) {
 }
 
 function playerGrowth() {
-    snake.body.push(createSnakeBody());
+    snake.body.push(createSnakeBody(snake.body.length));
 }
 
 function createSnakeHead() {
@@ -250,8 +287,9 @@ function createSnakeHead() {
     return snake;
 }
 
-function createSnakeBody() {
+function createSnakeBody(len) {
     let snakeBody = {
+        id: "body" + len,
         element: document.createElement('div'),
         direction: "",
         x: 0,
