@@ -1,3 +1,11 @@
+/* Animation variables */
+:root {
+    --random-x: 0%;
+    --random-y: 0%;
+    --animation-speed: 5s;
+}
+
+/* Content CSS Nodes */
 html, body {
     margin: 0;
     height: 100%;
@@ -17,15 +25,30 @@ footer {
     padding-top: 1em;
 }
 
+footer span {
+    font-weight: bold;
+}
+
+/* TODO: Make this work with random screenshake */
+/* Board movement */
+@keyframes floater {
+    0% { 
+        transform: translate(0%, 0%);
+        transition: ease 0.2s;
+    }
+    50% {
+        transform: translate(var(--random-x), var(--random-y));
+        transition: ease 0.2s;
+    }
+}
+
+/* Game CSS Nodes */
+
 .game {
     display: flex;
     align-items: center;
     justify-content: center;
 } 
-
-footer span {
-    font-weight: bold;
-}
 
 .board {
      /* 
@@ -40,10 +63,10 @@ footer span {
         There are 15x15 block @ 32pxs in 7 different background-size boxs on the x and y axis
         https://css-tricks.com/background-patterns-simplified-by-conic-gradients/#checkerboard
     */
-    background: repeating-conic-gradient(#808080 0% 25%, white 0% 50%); 
+    background: repeating-conic-gradient(#2C3E50 0% 25%, #233140 0% 50%); 
     background-size: 64px 64px; /* background-size box */
-    border-radius: 5%;
-    border: 32px ridge;
+    border-radius: 2%;
+    border: 2px solid black; 
     position: relative;
 }
 
@@ -52,20 +75,39 @@ footer span {
     animation-duration: var(--animation-speed);
 }
 
-/* Animation variables */
-:root {
-    --random-x: 0%;
-    --random-y: 0%;
-    --animation-speed: 5s;
+.snake-head {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    background-color: #3498DB;
+    border-radius: 10%;
 }
 
-@keyframes floater {
-    0% { 
-        transform: translate(0%, 0%);
-        transition: ease 0.2s;
-    }
-    50% {
-        transform: translate(var(--random-x), var(--random-y));
-        transition: ease 0.2s;
-    }
+.snake-body {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    background-color: #3498DB;
+    border-radius: 10%;
+}
+
+.apple {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    background-color: #e36275;
+    border-radius: 20%;
+}
+
+/* I didn't like how box-shadow is implemented */
+/* Allows for more control given the current situation */
+.box-shadow {
+    display: flex;
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    /* background-color: rgba(0, 0, 0, 0.7); */
+    justify-content: center;
+    align-items: center;
+    border-radius: 10%;
 }

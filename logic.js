@@ -29,23 +29,8 @@ window.addEventListener('load', () => {
     debugDisplay = document.querySelector('.debug-board');
     let randomValue = 5;
 
-    // Create the background shade for the board
-    let shade = (() => {
-        let shadeElement = document.createElement('div');
-        shadeElement.style.width = '540px';
-        shadeElement.style.height = '540px';
-        shadeElement.style.backgroundColor = '#2b1515';
-        shadeElement.style.position = 'absolute';
-        shadeElement.style.zIndex = '-1';
-        shadeElement.style.borderRadius = '1%'
-        return shadeElement;
-    })();
-
-
     // Add the movement
     document.addEventListener('keydown', (e) => moveSnake(e, gameBoard, score));
-
-    game.append(shade);
 
     // Randomize the initial animation transition values
     document.documentElement.style.setProperty('--random-x', getRandomInt(randomValue) + '%');
@@ -80,7 +65,6 @@ window.addEventListener('load', () => {
     }
 
     setInterval(() => {
-        //moveSnake(gameBoard)
         clearBoard(board);
         drawBoard(gameBoard, board);
     }, (1 / 60) * 1000);
@@ -281,7 +265,7 @@ function playerGrowth() {
 function createSnakeHead() {
     let snake = {
         head: {
-            element: "",
+            element: document.createElement('div'),
             direction: "",
             x: 0,
             y: 0
@@ -289,14 +273,11 @@ function createSnakeHead() {
         body: []
     };
 
-    let snakeHead = document.createElement('div');
-    snakeHead.style.width = '32px';
-    snakeHead.style.height = '32px';
-    snakeHead.style.backgroundColor = '#a9fc03';
-    snakeHead.style.position = 'absolute';
-    snakeHead.style.borderRadius = '1%'
+    let snakeHeadElement = document.createElement('div');
+    snakeHeadElement.classList.add("snake-head");
 
-    snake.head.element = snakeHead;
+    snake.head.element.classList.add("box-shadow");
+    snake.head.element.append(snakeHeadElement);
 
     return snake;
 }
@@ -310,21 +291,23 @@ function createSnakeBody(len) {
         y: 0
     };
 
-    snakeBody.element.style.width = '32px';
-    snakeBody.element.style.height = '32px';
-    snakeBody.element.style.backgroundColor = '#96bf36';
-    snakeBody.element.style.position = 'absolute';
-    snakeBody.element.style.borderRadius = '1%'
+    let snakeBodyElement = document.createElement('div');
+    snakeBodyElement.classList.add("snake-body");
+
+    snakeBody.element.classList.add("box-shadow");
+    snakeBody.element.append(snakeBodyElement);
 
     return snakeBody;
 }
 
 function createApple() {
-    let snakeBody = document.createElement('div');
-    snakeBody.style.width = '32px';
-    snakeBody.style.height = '32px';
-    snakeBody.style.backgroundColor = '#e36275';
-    snakeBody.style.position = 'absolute';
-    snakeBody.style.borderRadius = '30%'
-    return snakeBody;
+    let apple = document.createElement('div');
+    
+    let appleElement = document.createElement('div');
+    appleElement.classList.add("apple");
+
+    apple.classList.add("box-shadow");
+    apple.append(appleElement);
+
+    return apple;
 }

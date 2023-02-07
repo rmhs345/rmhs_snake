@@ -2,12 +2,14 @@ RMHS Snake
 
 todo ---------------------------------
 - Automovement
-- Player collision (Wall and itself)
+- Apple spawn
 - Polish Polish Polish
+    Change board movement shake to hitting on wall / itself
+- Add an option to add shadows behind the snake elements
 
 working on ---------------------------------
-- Snake bodies
-    - Stop player from moving in the opposite direction when moving
+- Stop player from moving in the opposite direction when moving
+- Player collision (Wall and itself) [Death]
 
 bugs ---------------------------------
 
@@ -17,3 +19,4 @@ done ---------------------------------
 - Player growth
 - Score
 - Player movement
+- Snake bodies
