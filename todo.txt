@@ -6,9 +6,9 @@ todo ---------------------------------
 - Polish Polish Polish
     Change board movement shake to hitting on wall / itself
 - Add an option to add shadows behind the snake elements
+- Sounds effects (Apple, movement, collison)
 
 working on ---------------------------------
-- Automovement
 - Player collision (Wall and itself) [Death]
 
 bugs ---------------------------------
@@ -23,3 +23,4 @@ done ---------------------------------
 - Player movement
 - Snake bodies
 - Stop player from moving in the opposite direction when moving
+- Automovement

@@ -1,8 +1,10 @@
 let gameBoard = "";
 let snake = "";
+let score = "";
 let debugDisplay = ""
 let debug = false;
 let playerScore = 0;
+let firstMovement = false;
 
 window.addEventListener('load', () => {
     snake = createSnakeHead();
@@ -25,7 +27,7 @@ window.addEventListener('load', () => {
     ]
     const game = document.querySelector('.game');
     const board = document.querySelector('.board');
-    let score = document.querySelector('.score');
+    score = document.querySelector('.score');
     debugDisplay = document.querySelector('.debug-board');
     let randomValue = 5;
 
@@ -134,59 +136,53 @@ function clearBoard(board) {
     }
 }
 
-function moveSnake(event, currentBoardState, scoreElement) {
+function autoMovement(currentBoardState) {
     let nextMovement = {
         x: 0,
         y: 0
     };
-    let movementKeyTouched = false;
 
-    // https://stackoverflow.com/a/5597114
-    switch(event.key) {
-        case 'ArrowLeft': 
+    switch(snake.head.direction) {
+        case 'LEFT': 
             // left
             if (snake.head.direction != "RIGHT") {
                 nextMovement.x = snake.head.x;
                 nextMovement.y = snake.head.y - 1;
                 snake.head.direction = "LEFT";
-                movementKeyTouched = true;
             }
             
         break;
-        case 'ArrowRight': 
+        case 'RIGHT': 
             // right
             if (snake.head.direction != "LEFT") {
                 nextMovement.x = snake.head.x;
                 nextMovement.y = snake.head.y + 1;
                 snake.head.direction = "RIGHT";
-                movementKeyTouched = true;
             }
         break;
-        case 'ArrowUp': 
+        case 'UP': 
             // up
             if (snake.head.direction != "DOWN") {
                 nextMovement.x = snake.head.x - 1;
                 nextMovement.y = snake.head.y;
                 snake.head.direction = "UP";
-                movementKeyTouched = true;
             }
         break;
-        case 'ArrowDown': 
+        case 'DOWN': 
             // down
             if (snake.head.direction != "UP") {
                 nextMovement.x = snake.head.x + 1;
                 nextMovement.y = snake.head.y;
                 snake.head.direction = "DOWN";
-                movementKeyTouched = true;
             }
         break;
     }
 
-    if(checkInBounds(nextMovement.x, nextMovement.y) && movementKeyTouched) {
+    if(checkInBounds(nextMovement.x, nextMovement.y)) {
         if (checkIfApple(nextMovement.x, nextMovement.y, currentBoardState)) {
             // Gobbling an apple
             playerScore += 1;
-            scoreElement.innerText = "score: " + playerScore;
+            score.innerText = "score: " + playerScore;
             playerGrowth();
         }
 
@@ -198,6 +194,57 @@ function moveSnake(event, currentBoardState, scoreElement) {
     } else {
         console.log("Not in bounds")
     }
+}
+
+function moveSnake(event, currentBoardState) {
+    let nextMovement = {
+        x: 0,
+        y: 0
+    };
+    let movementKeyTouched = false;
+
+    // https://stackoverflow.com/a/5597114
+    switch(event.key) {
+        case 'ArrowLeft': 
+            // left
+            if (snake.head.direction != "RIGHT") {
+                snake.head.direction = "LEFT";
+                movementKeyTouched = true;
+            }
+            
+        break;
+        case 'ArrowRight': 
+            // right
+            if (snake.head.direction != "LEFT") {
+                snake.head.direction = "RIGHT";
+                movementKeyTouched = true;
+            }
+        break;
+        case 'ArrowUp': 
+            // up
+            if (snake.head.direction != "DOWN") {
+                snake.head.direction = "UP";
+                movementKeyTouched = true;
+            }
+        break;
+        case 'ArrowDown': 
+            // down
+            if (snake.head.direction != "UP") {
+                snake.head.direction = "DOWN";
+                movementKeyTouched = true;
+            }
+        break;
+    }
+
+    if (movementKeyTouched && !firstMovement) {
+        firstMovement = true;
+
+        // Trigger the movement on first call, then have calls on a interval
+        autoMovement(gameBoard);
+        setInterval(() => {
+            autoMovement(gameBoard);
+        }, 1 * 200);
+    }       
 }
 
 function updateSnakeLocation(currentBoardState, nextMovement) {
