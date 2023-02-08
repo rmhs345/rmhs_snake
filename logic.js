@@ -145,31 +145,40 @@ function moveSnake(event, currentBoardState, scoreElement) {
     switch(event.key) {
         case 'ArrowLeft': 
             // left
-            nextMovement.x = snake.head.x;
-            nextMovement.y = snake.head.y - 1;
-            snake.head.direction = "left";
-            movementKeyTouched = true;
+            if (snake.head.direction != "RIGHT") {
+                nextMovement.x = snake.head.x;
+                nextMovement.y = snake.head.y - 1;
+                snake.head.direction = "LEFT";
+                movementKeyTouched = true;
+            }
+            
         break;
         case 'ArrowRight': 
             // right
-            nextMovement.x = snake.head.x;
-            nextMovement.y = snake.head.y + 1;
-            snake.head.direction = "right";
-            movementKeyTouched = true;
+            if (snake.head.direction != "LEFT") {
+                nextMovement.x = snake.head.x;
+                nextMovement.y = snake.head.y + 1;
+                snake.head.direction = "RIGHT";
+                movementKeyTouched = true;
+            }
         break;
         case 'ArrowUp': 
             // up
-            nextMovement.x = snake.head.x - 1;
-            nextMovement.y = snake.head.y;
-            snake.head.direction = "up";
-            movementKeyTouched = true;
+            if (snake.head.direction != "DOWN") {
+                nextMovement.x = snake.head.x - 1;
+                nextMovement.y = snake.head.y;
+                snake.head.direction = "UP";
+                movementKeyTouched = true;
+            }
         break;
         case 'ArrowDown': 
             // down
-            nextMovement.x = snake.head.x + 1;
-            nextMovement.y = snake.head.y;
-            snake.head.direction = "down";
-            movementKeyTouched = true;
+            if (snake.head.direction != "UP") {
+                nextMovement.x = snake.head.x + 1;
+                nextMovement.y = snake.head.y;
+                snake.head.direction = "DOWN";
+                movementKeyTouched = true;
+            }
         break;
     }
 

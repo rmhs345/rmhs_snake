@@ -8,10 +8,12 @@ todo ---------------------------------
 - Add an option to add shadows behind the snake elements
 
 working on ---------------------------------
-- Stop player from moving in the opposite direction when moving
+- Automovement
 - Player collision (Wall and itself) [Death]
 
 bugs ---------------------------------
+Fix debug display
+    - Nodes and the actual display of the debug board
 
 done ---------------------------------
 - Player board
@@ -20,3 +22,4 @@ done ---------------------------------
 - Score
 - Player movement
 - Snake bodies
+- Stop player from moving in the opposite direction when moving
