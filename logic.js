@@ -5,24 +5,25 @@ let debugDisplay = ""
 let debug = false;
 let playerScore = 0;
 let firstMovement = false;
+let autoMovementInterval = "";
 
 window.addEventListener('load', () => {
     snake = createSnakeHead();
     gameBoard = [
         ['head', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', 'apple', '', '', ''],
+        ['', '', '', '', '', 'apple', '', '', '', '', '', 'apple', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', 'apple', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', 'apple', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', 'apple', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', 'apple', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],        
     ]
     const game = document.querySelector('.game');
@@ -178,7 +179,7 @@ function autoMovement(currentBoardState) {
         break;
     }
 
-    if(checkInBounds(nextMovement.x, nextMovement.y)) {
+    if(checkInBounds(nextMovement.x, nextMovement.y) && isNotBodyCollision(nextMovement.x, nextMovement.y)) {
         if (checkIfApple(nextMovement.x, nextMovement.y, currentBoardState)) {
             // Gobbling an apple
             playerScore += 1;
@@ -192,18 +193,16 @@ function autoMovement(currentBoardState) {
 
         currentBoardState = updateSnakeLocation(currentBoardState, nextMovement);
     } else {
+        // Player dead
+        clearInterval(autoMovementInterval);
         console.log("Not in bounds")
     }
 }
 
-function moveSnake(event, currentBoardState) {
-    let nextMovement = {
-        x: 0,
-        y: 0
-    };
+function moveSnake(event) {
     let movementKeyTouched = false;
 
-    // https://stackoverflow.com/a/5597114
+    // https://stackoverflow.com/a/5597114 -> Keypress values
     switch(event.key) {
         case 'ArrowLeft': 
             // left
@@ -241,7 +240,7 @@ function moveSnake(event, currentBoardState) {
 
         // Trigger the movement on first call, then have calls on a interval
         autoMovement(gameBoard);
-        setInterval(() => {
+        autoMovementInterval = setInterval(() => {
             autoMovement(gameBoard);
         }, 1 * 200);
     }       
@@ -298,6 +297,14 @@ function checkInBounds(x, y) {
     if (y < 0 || y > 14) {
         return false;
     } 
+
+    return true;
+}
+
+function isNotBodyCollision(x, y) {
+    if (gameBoard[x][y].includes('body')) {
+        return false;
+    }
 
     return true;
 }
