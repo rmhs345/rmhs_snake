@@ -29,7 +29,14 @@ window.addEventListener('load', () => {
     const game = document.querySelector('.game');
     const board = document.querySelector('.board');
     score = document.querySelector('.score');
-    debugDisplay = document.querySelector('.debug-board');
+    if (debug) {
+        debugDisplay = document.createElement('div');
+        debugDisplay.classList.add("debug-board");
+
+        let bodyContent = document.querySelector('.body-content');
+        bodyContent.appendChild(debugDisplay);
+        debugDisplay = document.querySelector('.debug-board');
+    }
     let randomValue = 5;
 
     // Add the movement
@@ -39,40 +46,39 @@ window.addEventListener('load', () => {
     document.documentElement.style.setProperty('--random-x', getRandomInt(randomValue) + '%');
     document.documentElement.style.setProperty('--random-y', getRandomInt(randomValue) + '%');
 
-    // Reset the animation on end
-    game.onanimationend = () => {
-        document.documentElement.style.setProperty('--random-x', getRandomInt(randomValue) + '%');
-        document.documentElement.style.setProperty('--random-y', getRandomInt(randomValue) + '%');
+    // // Reset the animation on end
+    // game.onanimationend = () => {
+    //     document.documentElement.style.setProperty('--random-x', getRandomInt(randomValue) + '%');
+    //     document.documentElement.style.setProperty('--random-y', getRandomInt(randomValue) + '%');
 
-        let x = document.documentElement.style.getPropertyValue('--random-x');
-        let y = document.documentElement.style.getPropertyValue('--random-y');
+    //     let x = document.documentElement.style.getPropertyValue('--random-x');
+    //     let y = document.documentElement.style.getPropertyValue('--random-y');
 
-        while (x == '0%' && y == '0%') {
-            if (Math.random()) {
-                document.documentElement.style.setProperty('--random-x', getRandomInt(randomValue) + '%');
-            } else {
-                document.documentElement.style.setProperty('--random-y', getRandomInt(randomValue) + '%');
-            }
+    //     while (x == '0%' && y == '0%') {
+    //         if (Math.random()) {
+    //             document.documentElement.style.setProperty('--random-x', getRandomInt(randomValue) + '%');
+    //         } else {
+    //             document.documentElement.style.setProperty('--random-y', getRandomInt(randomValue) + '%');
+    //         }
 
-            x = document.documentElement.style.getPropertyValue('--random-x');
-            y = document.documentElement.style.getPropertyValue('--random-y');
-        }
+    //         x = document.documentElement.style.getPropertyValue('--random-x');
+    //         y = document.documentElement.style.getPropertyValue('--random-y');
+    //     }
 
-        // Change animation speed
-        document.documentElement.style.setProperty('--animation-speed', Math.floor(Math.random() * 5) + 1 + 's')
+    //     // Change animation speed
+    //     document.documentElement.style.setProperty('--animation-speed', Math.floor(Math.random() * 5) + 1 + 's')
 
-        board.classList.remove('board-animation');
-        setTimeout(() => {
-            board.classList.add('board-animation');
-        },1);   
-    }
+    //     board.classList.remove('board-animation');
+    //     setTimeout(() => {
+    //         board.classList.add('board-animation');
+    //     },1);   
+    // }
 
     setInterval(() => {
         clearBoard(board);
         drawBoard(gameBoard, board);
     }, (1 / 60) * 1000);
 
-    
 }, false);
     
 /*
@@ -109,7 +115,18 @@ function drawBoard(currentBoardState, board) {
                 let snakeHead = snake.head.element;
                 
                 if (debug) {
-                    snakeHead.innerText = "x: " + i + ", y: " + j;
+                    let snakeHeadElement = snakeHead.querySelector(".snake-head");
+
+                    for (let child in snakeHeadElement.childNodes) {
+                        if (snakeHeadElement.childNodes.hasOwnProperty(child)) {
+                            child = snakeHeadElement.childNodes[child];
+                            if (child.nodeType != 1  && child != undefined) {
+                                snakeHeadElement.removeChild(child);
+                            }
+                        }
+                    }
+                    let textNode = document.createTextNode("x: " + i + ", y: " + j);
+                    snakeHeadElement.prepend(textNode);
                 }
 
                 snakeHead.style.top = (32 * i) + 'px'
@@ -119,7 +136,18 @@ function drawBoard(currentBoardState, board) {
                 let snakeBody = snake.body[currentBoardState[i][j].charAt(4)].element;
                 
                 if (debug) {
-                    snakeBody.innerText = "x: " + i + ", y: " + j;
+                    let snakeBodyElement = snakeBody.querySelector(".snake-body");
+
+                    for (let child in snakeBodyElement.childNodes) {
+                        if (snakeBodyElement.childNodes.hasOwnProperty(child)) {
+                            child = snakeBodyElement.childNodes[child];
+                            if (child.nodeType != 1  && child != undefined) {
+                                snakeBodyElement.removeChild(child);
+                            }
+                        }
+                    }
+                    let textNode = document.createTextNode("x: " + i + ", y: " + j);
+                    snakeBodyElement.prepend(textNode);
                 }
 
                 snakeBody.style.top = (32 * i) + 'px'
@@ -127,6 +155,22 @@ function drawBoard(currentBoardState, board) {
                 board.append(snakeBody);
             } else if (currentBoardState[i][j] == 'apple') {
                 let apple = createApple();
+
+                if (debug) {
+                    let appleElement = apple.element.querySelector(".apple");
+
+                    for (let child in appleElement.childNodes) {
+                        if (appleElement.childNodes.hasOwnProperty(child)) {
+                            child = appleElement.childNodes[child];
+                            if (child.nodeType != 1  && child != undefined) {
+                                appleElement.removeChild(child);
+                            }
+                        }
+                    }
+                    let textNode = document.createTextNode("x: " + i + ", y: " + j);
+                    appleElement.prepend(textNode);
+                }
+
                 apple.x = i;
                 apple.y = j;
                 apple.element.style.top = (32 * i) + 'px'
@@ -346,7 +390,7 @@ function createSnakeHead() {
     let snakeHeadElement = document.createElement('div');
     snakeHeadElement.classList.add("snake-head");
 
-    snake.head.element.classList.add("box-shadow");
+    snake.head.element.classList.add("node-container");
     snake.head.element.append(snakeHeadElement);
 
     return snake;
@@ -364,7 +408,7 @@ function createSnakeBody(len) {
     let snakeBodyElement = document.createElement('div');
     snakeBodyElement.classList.add("snake-body");
 
-    snakeBody.element.classList.add("box-shadow");
+    snakeBody.element.classList.add("node-container");
     snakeBody.element.append(snakeBodyElement);
 
     return snakeBody;
@@ -380,7 +424,7 @@ function createApple() {
     let appleElement = document.createElement('div');
     appleElement.classList.add("apple");
 
-    apple.element.classList.add("box-shadow");
+    apple.element.classList.add("node-container");
     apple.element.append(appleElement);
 
     return apple;

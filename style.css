@@ -42,6 +42,15 @@ footer span {
     }
 }
 
+.body-content {
+    display: flex;
+}
+
+.debug-board {
+    margin-left: 2em;
+    width: 500px;
+}
+
 /* Game CSS Nodes */
 
 .game {
@@ -99,9 +108,7 @@ footer span {
     border-radius: 20%;
 }
 
-/* I didn't like how box-shadow is implemented */
-/* Allows for more control given the current situation */
-.box-shadow {
+.node-container {
     display: flex;
     position: absolute;
     width: 32px;
