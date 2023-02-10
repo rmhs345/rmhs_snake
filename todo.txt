@@ -4,13 +4,14 @@ todo ---------------------------------
 - Polish Polish Polish
     Change board movement shake to hitting on wall / itself
 - Sounds effects (Apple, movement, collison)
+- Game over
 
 working on ---------------------------------
-- Apple spawn
-
-bugs ---------------------------------
 Fix debug display
     - Nodes and the actual display of the debug board
+
+bugs ---------------------------------
+Body nodes are not getitng drawn properly after a long snake
 
 done ---------------------------------
 - Player board
@@ -22,3 +23,4 @@ done ---------------------------------
 - Stop player from moving in the opposite direction when moving
 - Automovement
 - Player collision (Wall and itself) [Death]
+- Apple spawn

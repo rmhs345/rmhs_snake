@@ -12,18 +12,18 @@ window.addEventListener('load', () => {
     gameBoard = [
         ['head', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', 'apple', '', '', '', '', '', 'apple', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', 'apple', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', 'apple', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', 'apple', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', 'apple', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', 'apple', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],        
     ]
     const game = document.querySelector('.game');
@@ -84,6 +84,10 @@ function getRandomInt(max) {
     return (Math.floor(value) * (Math.random() + 0.25)) * sign;
 }
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
 function drawBoard(currentBoardState, board) {
     if (debug) {
         while (debugDisplay.firstChild) {
@@ -123,9 +127,11 @@ function drawBoard(currentBoardState, board) {
                 board.append(snakeBody);
             } else if (currentBoardState[i][j] == 'apple') {
                 let apple = createApple();
-                apple.style.top = (32 * i) + 'px'
-                apple.style.left = (32 * j) + 'px'
-                board.append(apple);
+                apple.x = i;
+                apple.y = j;
+                apple.element.style.top = (32 * i) + 'px'
+                apple.element.style.left = (32 * j) + 'px'
+                board.append(apple.element);
             }
         }
     }
@@ -185,6 +191,7 @@ function autoMovement(currentBoardState) {
             playerScore += 1;
             score.innerText = "score: " + playerScore;
             playerGrowth();
+            spawnApple();
         }
 
         // Update the board to clear the head of its previous position
@@ -364,13 +371,36 @@ function createSnakeBody(len) {
 }
 
 function createApple() {
-    let apple = document.createElement('div');
+    let apple = {
+        element: document.createElement('div'),
+        x: 0,
+        y: 0
+    }
     
     let appleElement = document.createElement('div');
     appleElement.classList.add("apple");
 
-    apple.classList.add("box-shadow");
-    apple.append(appleElement);
+    apple.element.classList.add("box-shadow");
+    apple.element.append(appleElement);
 
     return apple;
+}
+
+function spawnApple() {
+    // generate a random number for x / y
+    // check to see if the location is taken by an element
+    // if not, place the apple
+    let noPlacement = true;
+    let x = "";
+    let y = ""
+
+    while (noPlacement) {
+        x = getRandomInt(15);
+        y = getRandomInt(15);
+
+        if(gameBoard[x][y] == "") {
+            gameBoard[x][y] = "apple";
+            noPlacement = false;
+        }
+    }
 }
