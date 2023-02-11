@@ -6,6 +6,7 @@ let debug = false;
 let playerScore = 0;
 let firstMovement = false;
 let autoMovementInterval = "";
+let boardDrawInterval = "";
 
 window.addEventListener('load', () => {
     snake = createSnakeHead();
@@ -74,7 +75,7 @@ window.addEventListener('load', () => {
     //     },1);   
     // }
 
-    setInterval(() => {
+    boardDrawInterval = setInterval(() => {
         clearBoard(board);
         drawBoard(gameBoard, board);
     }, (1 / 60) * 1000);
@@ -133,7 +134,7 @@ function drawBoard(currentBoardState, board) {
                 snakeHead.style.left = (32 * j) + 'px'
                 board.append(snakeHead);
             } else if (currentBoardState[i][j].includes('body')) {
-                let snakeBody = snake.body[currentBoardState[i][j].charAt(4)].element;
+                let snakeBody = snake.body[currentBoardState[i][j].substring(4)].element;
                 
                 if (debug) {
                     let snakeBodyElement = snakeBody.querySelector(".snake-body");
@@ -245,6 +246,7 @@ function autoMovement(currentBoardState) {
         currentBoardState = updateSnakeLocation(currentBoardState, nextMovement);
     } else {
         // Player dead
+        clearInterval(boardDrawInterval); 
         clearInterval(autoMovementInterval);
         console.log("Not in bounds")
     }
@@ -406,7 +408,7 @@ function createSnakeBody(len) {
     };
 
     let snakeBodyElement = document.createElement('div');
-    snakeBodyElement.classList.add("snake-body");
+    snakeBodyElement.classList.add("snake-body", snakeBody.id);
 
     snakeBody.element.classList.add("node-container");
     snakeBody.element.append(snakeBodyElement);
