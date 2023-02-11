@@ -30,14 +30,6 @@ window.addEventListener('load', () => {
     const game = document.querySelector('.game');
     const board = document.querySelector('.board');
     score = document.querySelector('.score');
-    if (debug) {
-        debugDisplay = document.createElement('div');
-        debugDisplay.classList.add("debug-board");
-
-        let bodyContent = document.querySelector('.body-content');
-        bodyContent.appendChild(debugDisplay);
-        debugDisplay = document.querySelector('.debug-board');
-    }
     let randomValue = 5;
 
     // Add the movement
@@ -91,6 +83,22 @@ function getRandomInt(max) {
     return (Math.floor(value) * (Math.random() + 0.25)) * sign;
 }
 
+function toggleDebug() {
+    debug=!debug;
+
+    if (debug) {
+        debugDisplay = document.createElement('div');
+        debugDisplay.classList.add("debug-board");
+
+        let bodyContent = document.querySelector('.body-content');
+        bodyContent.appendChild(debugDisplay);
+        debugDisplay = document.querySelector('.debug-board');
+    } else {
+        let bodyContent = document.querySelector('.body-content');
+        bodyContent.removeChild(debugDisplay);
+    }
+}
+
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
@@ -128,6 +136,16 @@ function drawBoard(currentBoardState, board) {
                     }
                     let textNode = document.createTextNode("x: " + i + ", y: " + j);
                     snakeHeadElement.prepend(textNode);
+                } else {
+                    let snakeHeadElement = snakeHead.querySelector(".snake-head");
+                    for (let child in snakeHeadElement.childNodes) {
+                        if (snakeHeadElement.childNodes.hasOwnProperty(child)) {
+                            child = snakeHeadElement.childNodes[child];
+                            if (child.nodeType != 1  && child != undefined) {
+                                snakeHeadElement.removeChild(child);
+                            }
+                        }
+                    }
                 }
 
                 snakeHead.style.top = (32 * i) + 'px'
@@ -149,6 +167,16 @@ function drawBoard(currentBoardState, board) {
                     }
                     let textNode = document.createTextNode("x: " + i + ", y: " + j);
                     snakeBodyElement.prepend(textNode);
+                } else {
+                    let snakeBodyElement = snakeBody.querySelector(".snake-body");
+                    for (let child in snakeBodyElement.childNodes) {
+                        if (snakeBodyElement.childNodes.hasOwnProperty(child)) {
+                            child = snakeBodyElement.childNodes[child];
+                            if (child.nodeType != 1  && child != undefined) {
+                                snakeBodyElement.removeChild(child);
+                            }
+                        }
+                    }
                 }
 
                 snakeBody.style.top = (32 * i) + 'px'
@@ -246,7 +274,7 @@ function autoMovement(currentBoardState) {
         currentBoardState = updateSnakeLocation(currentBoardState, nextMovement);
     } else {
         // Player dead
-        clearInterval(boardDrawInterval); 
+        //clearInterval(boardDrawInterval); 
         clearInterval(autoMovementInterval);
         console.log("Not in bounds")
     }
