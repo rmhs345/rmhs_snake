@@ -7,7 +7,7 @@ let freshBoard = [
     ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-    ['', '', '', 'head', '', '', '', '', '', '', '', '', 'apple', '', ''],
+    ['', '', '', '', 'head', '', '', '', '', '', '', '', 'apple', '', ''],
     ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
@@ -32,12 +32,13 @@ Array.prototype.clone = function(){
 };
 
 window.addEventListener('load', () => {
-    snake = createSnakeHead();
+    gameBoard = freshBoard.clone();
+    snake = createSnakeHead(gameBoard);
     const game = document.querySelector('.game');
     const board = document.querySelector('.board');
     score = document.querySelector('.score');
     let randomValue = 5;
-    gameBoard = freshBoard.clone();
+    
 
     // Add the movement
     document.addEventListener('keydown', (e) => moveSnake(e, gameBoard, score));
@@ -77,7 +78,7 @@ window.addEventListener('load', () => {
     boardDrawInterval = setInterval(() => {
         clearBoard(board);
         drawBoard(gameBoard, board);
-    }, (1 / 60) * 1000);
+    }, (1 / 60) * 500);
 
 }, false);
     
@@ -434,9 +435,7 @@ function checkInBounds(x, y) {
 }
 
 function isNotBodyCollision(x, y) {
-    if (gameBoard[x][y].includes('body')) {
-        return false;
-    }
+    if (gameBoard[x][y].includes('body')) return false;
 
     return true;
 }
@@ -449,21 +448,23 @@ function checkIfApple(x, y, currentBoardState) {
 
 function updateBoard(x, y, type, currentBoardState) {
     currentBoardState[x][y] = type;
-    this.board = currentBoardState;
-    return this.board;
+    board = currentBoardState;
+    return board;
 }
 
 function playerGrowth() {
     snake.body.push(createSnakeBody(snake.body.length));
 }
 
-function createSnakeHead() {
+function createSnakeHead(gameBoard) {
+    let snakePosition = getSnakeHeadPosition(gameBoard);
+
     let snake = {
         head: {
             element: document.createElement('div'),
             direction: "",
-            x: 7,
-            y: 3
+            x: snakePosition.x,
+            y: snakePosition.y
         },
         body: []
     };
@@ -547,4 +548,19 @@ function restartGame() {
     playerScore = 0;
     score.innerText = "score: " + playerScore;
     isPlayerDead = false;
+}
+
+function getSnakeHeadPosition(gameBoard) {
+    for (let i = 0; i < 15; i++) {
+        for (let j = 0; j < 15; j++) {
+            if (gameBoard[i][j] == 'head') {
+                return {
+                    x: i,
+                    y: j
+                }
+            }
+        }
+    }
+
+    return null;
 }

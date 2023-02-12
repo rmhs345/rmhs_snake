@@ -4,13 +4,13 @@ todo ---------------------------------
 - Polish - Change board movement shake to hitting on wall / itself
 - Polish -Adding effects to the apple (Twist or lerp animation)
 - Polish -Sounds effects (Apple, movement, collison)
-- Refactor - Make snake head placement dynamic
+- Polish - Highscore saved to cookie
 
 working on ---------------------------------
 
 
 bugs ---------------------------------
-
+- User can press multiple keys at once
 
 done ---------------------------------
 - Player board
@@ -27,3 +27,4 @@ done ---------------------------------
     - Nodes and the actual display of the debug board
 - Body nodes are not getitng drawn properly after a long streaks
 - Game over
+- Refactor - Make snake head placement dynamic
