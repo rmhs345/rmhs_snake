@@ -10,6 +10,7 @@ html, body {
     margin: 0;
     height: 100%;
     min-height: 100%;
+    font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
 }
 
 body {
@@ -22,6 +23,9 @@ body {
 }
 
 footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding-top: 1em;
 }
 
@@ -117,4 +121,76 @@ footer span {
     justify-content: center;
     align-items: center;
     border-radius: 10%;
+}
+
+.game-over {
+    width: 320px;
+    height: 480px;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.75);
+    border-radius: 10%;
+}
+
+.game-over-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 80%;
+}
+
+.game-over-replay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20%;
+}
+
+.score-apple {
+    margin: 72px 0 48px 0;
+    width: 48px;
+    height: 48px;
+    background-color: #e36275;
+    border-radius: 20%;
+}
+
+.score-text {
+    color: white;
+    font-size: x-large;
+}
+
+/* CSS - Nomad List style - https://nomadlist.com */
+.snake-button {
+  background: #2C3E50;
+  border: 1px solid #2C3E50;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 16px;
+  min-height: 40px;
+  outline: 0;
+  padding: 12px 14px;
+  text-align: center;
+  text-rendering: geometricprecision;
+  text-transform: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+}
+
+.snake-button:hover,
+.snake-button:active {
+  background-color: initial;
+  background-position: 0 0;
+  color: #2C3E50;
+}
+
+.snake-button:active {
+  opacity: .5;
 }

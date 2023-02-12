@@ -1,4 +1,21 @@
-let gameBoard = "";
+let gameBoard;
+let freshBoard = [
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', 'head', '', '', '', '', '', '', '', '', 'apple', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],        
+];
 let snake = "";
 let score = "";
 let debugDisplay = ""
@@ -7,30 +24,20 @@ let playerScore = 0;
 let firstMovement = false;
 let autoMovementInterval = "";
 let boardDrawInterval = "";
+let playAgain = false;
+let isPlayerDead = false;
+
+Array.prototype.clone = function(){
+    return this.map(e => Array.isArray(e) ? e.clone() : e);
+};
 
 window.addEventListener('load', () => {
     snake = createSnakeHead();
-    gameBoard = [
-        ['head', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', 'apple', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],        
-    ]
     const game = document.querySelector('.game');
     const board = document.querySelector('.board');
     score = document.querySelector('.score');
     let randomValue = 5;
+    gameBoard = freshBoard.clone();
 
     // Add the movement
     document.addEventListener('keydown', (e) => moveSnake(e, gameBoard, score));
@@ -275,13 +282,57 @@ function autoMovement(currentBoardState) {
     } else {
         // Player dead
         //clearInterval(boardDrawInterval); 
-        clearInterval(autoMovementInterval);
-        console.log("Not in bounds")
+        if (!isPlayerDead) {
+            clearInterval(autoMovementInterval);
+
+            // Open Game over dialog
+            let gameOverDialog = document.createElement("div"); 
+            gameOverDialog.classList.add("game-over");
+
+            let scoreContent = document.createElement("div"); 
+            scoreContent.classList.add("game-over-score");
+
+            let apple = document.createElement("div");
+            apple.classList.add("score-apple");
+
+            let scoreElement = document.createElement("div"); 
+            scoreElement.classList.add("score-text");
+            scoreElement.innerText = "Score: " + playerScore;
+
+            scoreContent.append(apple, scoreElement); 
+
+            let replayButtonContainer = document.createElement("div");
+            replayButtonContainer.classList.add("game-over-replay");
+
+            let replayButton = document.createElement("button"); 
+            replayButton.classList.add("snake-button");
+            replayButton.innerText = "Play Again"
+            replayButton.onclick = restartGame;
+
+            replayButtonContainer.append(replayButton); 
+
+            gameOverDialog.append(scoreContent, replayButtonContainer); 
+
+            let bodyContent = document.querySelector('.game');
+            bodyContent.append(gameOverDialog); 
+
+            if (debug) {
+                console.log("Collision")
+            }
+            
+            isPlayerDead = true;
+        }
+        
     }
 }
 
 function moveSnake(event) {
     let movementKeyTouched = false;
+
+    if (playAgain) {
+        playAgain = false;
+        firstMovement = false;
+    }
 
     // https://stackoverflow.com/a/5597114 -> Keypress values
     switch(event.key) {
@@ -411,8 +462,8 @@ function createSnakeHead() {
         head: {
             element: document.createElement('div'),
             direction: "",
-            x: 0,
-            y: 0
+            x: 7,
+            y: 3
         },
         body: []
     };
@@ -477,4 +528,23 @@ function spawnApple() {
             noPlacement = false;
         }
     }
+}
+
+function restartGame() {
+    // Remove the dialog
+
+    playAgain = true;
+    let game = document.querySelector('.game');
+    let gameOverDialog = document.querySelector('.game-over');
+    game.removeChild(gameOverDialog);
+
+    // Reset the board
+    gameBoard = freshBoard.clone();
+    
+    snake = createSnakeHead();
+
+    // Reset the score
+    playerScore = 0;
+    score.innerText = "score: " + playerScore;
+    isPlayerDead = false;
 }

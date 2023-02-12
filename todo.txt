@@ -1,13 +1,13 @@
 RMHS Snake
 
 todo ---------------------------------
-- Polish Polish Polish
-    Change board movement shake to hitting on wall / itself
-- Sounds effects (Apple, movement, collison)
-- Game over
+- Polish - Change board movement shake to hitting on wall / itself
+- Polish -Adding effects to the apple (Twist or lerp animation)
+- Polish -Sounds effects (Apple, movement, collison)
+- Refactor - Make snake head placement dynamic
 
 working on ---------------------------------
-Body nodes are not getitng drawn properly after a long streaks
+
 
 bugs ---------------------------------
 
@@ -25,3 +25,5 @@ done ---------------------------------
 - Apple spawn
 - Fix debug display
     - Nodes and the actual display of the debug board
+- Body nodes are not getitng drawn properly after a long streaks
+- Game over
