@@ -285,15 +285,14 @@ function autoMovement(currentBoardState) {
             // Gobbling an apple
             playerScore += 1;
             score.innerText = "score: " + playerScore;
+
             playerGrowth(currentBoardState, snake.body[snake.body.length - 1]);
+            currentBoardState = updateSnakeLocation(currentBoardState, nextMovement)
             spawnApple();
+        } else {
+            // Update the board to clear the head of its previous position
+            currentBoardState = updateSnakeLocation(currentBoardState, nextMovement);
         }
-
-        // Update the board to clear the head of its previous position
-        currentBoardState = updateBoard(snake.head.x, snake.head.y, "", currentBoardState);
-        currentBoardState = updateBoard(nextMovement.x, nextMovement.y, "head", currentBoardState);
-
-        currentBoardState = updateSnakeLocation(currentBoardState, nextMovement);
     } else {
         // Player dead
         //clearInterval(boardDrawInterval); 
@@ -399,6 +398,9 @@ function updateSnakeLocation(currentBoardState, nextMovement) {
     let previousBodyX;
     let previousBodyY;
     let previousDirection;
+
+    currentBoardState = updateBoard(snake.head.x, snake.head.y, "", currentBoardState);
+    currentBoardState = updateBoard(nextMovement.x, nextMovement.y, "head", currentBoardState);
 
     snake.head.x = nextMovement.x;
     snake.head.y = nextMovement.y;

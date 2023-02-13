@@ -7,10 +7,9 @@ todo ---------------------------------
 - Polish - Highscore saved to cookie
 
 working on ---------------------------------
-
+- Missing direction on tail (Rare)
 
 bugs ---------------------------------
-
 
 done ---------------------------------
 - Player board
@@ -29,3 +28,4 @@ done ---------------------------------
 - Game over
 - Refactor - Make snake head placement dynamic
 - User can press multiple keys at once
+- Apple spawning on tail node (Rare)
