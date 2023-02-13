@@ -237,14 +237,13 @@ function autoMovement(currentBoardState) {
         y: 0
     };
 
-    snake.head.direction = nextSnakeMovement;
-
-    switch(snake.head.direction) {
+    switch(nextSnakeMovement) {
         case 'LEFT': 
             // left
             if (snake.head.direction != "RIGHT") {
                 nextMovement.x = snake.head.x;
-                nextMovement.y = snake.head.y - 1;
+                nextMovement.y = snake.head.y - 1
+                snake.head.direction = nextSnakeMovement; 
 
                 if (debug)
                     console.log("RENDERED MOVEMENT: " + snake.head.direction);
@@ -256,6 +255,7 @@ function autoMovement(currentBoardState) {
             if (snake.head.direction != "LEFT") {
                 nextMovement.x = snake.head.x;
                 nextMovement.y = snake.head.y + 1;
+                snake.head.direction = nextSnakeMovement; 
 
                 if (debug)
                     console.log("RENDERED MOVEMENT: " + snake.head.direction);
@@ -266,6 +266,7 @@ function autoMovement(currentBoardState) {
             if (snake.head.direction != "DOWN") {
                 nextMovement.x = snake.head.x - 1;
                 nextMovement.y = snake.head.y;
+                snake.head.direction = nextSnakeMovement; 
 
                 if (debug)
                     console.log("RENDERED MOVEMENT: " + snake.head.direction);
@@ -276,6 +277,7 @@ function autoMovement(currentBoardState) {
             if (snake.head.direction != "UP") {
                 nextMovement.x = snake.head.x + 1;
                 nextMovement.y = snake.head.y;
+                snake.head.direction = nextSnakeMovement; 
 
                 if (debug)
                     console.log("RENDERED MOVEMENT: " + snake.head.direction);
@@ -615,7 +617,6 @@ function getNodePosition(gameBoard, type) {
 }
 
 function removeAppleElement() {
-    console.log(apple);
     board.removeChild(apple.element);
 }
 
