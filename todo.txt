@@ -2,7 +2,6 @@ RMHS Snake
 
 todo ---------------------------------
 - Polish - Change board movement shake to hitting on wall / itself
-- Polish -Adding effects to the apple (Twist or lerp animation)
 - Polish -Sounds effects (Apple, movement, collison)
 - Polish - Highscore saved to cookie
 
@@ -29,3 +28,4 @@ done ---------------------------------
 - Refactor - Make snake head placement dynamic
 - User can press multiple keys at once
 - Apple spawning on tail node (Rare)
+- Polish -Adding effects to the apple (Twist or lerp animation)

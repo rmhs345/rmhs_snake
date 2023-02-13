@@ -46,6 +46,24 @@ footer span {
     }
 }
 
+@keyframes grow {
+    0% { 
+        width: 24px;
+        height: 24px;
+        transition: ease 0.2s;
+    }
+    50% {
+        width: 32px;
+        height: 32px;
+        transition: ease 0.2s;
+    }
+    100% {
+        width: 24px;
+        height: 24px;
+        transition: ease 0.2s;
+    }
+}
+
 .body-content {
     display: flex;
 }
@@ -93,7 +111,7 @@ footer span {
     height: 24px;
     position: absolute;
     background-color: #3498DB;
-    border-radius: 10%;
+    border-radius: 30%;
 }
 
 .snake-body {
@@ -110,6 +128,7 @@ footer span {
     position: absolute;
     background-color: #e36275;
     border-radius: 50%;
+    animation: 2s grow 0s infinite;
 }
 
 .node-container {

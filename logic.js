@@ -27,8 +27,10 @@ let boardDrawInterval = "";
 let playAgain = false;
 let isPlayerDead = false;
 let gameSpeed = 60 / 1000;
-let movementSpeed = 1000 / 5;
+let movementSpeed = 1000 / 6;
 let nextSnakeMovement = "";
+let board = "";
+let apple; 
 
 Array.prototype.clone = function(){
     return this.map(e => Array.isArray(e) ? e.clone() : e);
@@ -38,11 +40,14 @@ window.addEventListener('load', () => {
     gameBoard = freshBoard.clone();
     snake = createSnakeHead(gameBoard);
     snake.body.push(createSnakeBody(0, snake.head.x, snake.head.y - 1));
+    apple = createApple();
+
     const game = document.querySelector('.game');
-    const board = document.querySelector('.board');
+    board = document.querySelector('.board');
     score = document.querySelector('.score');
     let randomValue = 5;
     
+    drawAppleElement();
 
     // Add the movement
     document.addEventListener('keydown', (e) => moveSnake(e, gameBoard, score));
@@ -195,8 +200,6 @@ function drawBoard(currentBoardState, board) {
                 snakeBody.style.left = (32 * j) + 'px'
                 board.append(snakeBody);
             } else if (currentBoardState[i][j] == 'apple') {
-                let apple = createApple();
-
                 if (debug) {
                     let appleElement = apple.element.querySelector(".apple");
 
@@ -211,20 +214,20 @@ function drawBoard(currentBoardState, board) {
                     let textNode = document.createTextNode("x: " + i + ", y: " + j);
                     appleElement.prepend(textNode);
                 }
-
-                apple.x = i;
-                apple.y = j;
-                apple.element.style.top = (32 * i) + 'px'
-                apple.element.style.left = (32 * j) + 'px'
-                board.append(apple.element);
             }
         }
     }
 }
 
 function clearBoard(board) {
-    while (board.lastElementChild) {
-        board.removeChild(board.lastElementChild);
+    let children = board.childNodes;
+    for (let child in children){
+        if (children.hasOwnProperty(child)) {
+            let innerNode = children[child].childNodes[0].classList[0]; 
+            if (innerNode != "apple") {
+                board.removeChild(children[child]);
+            }
+        }
     }
 }
 
@@ -285,9 +288,10 @@ function autoMovement(currentBoardState) {
             // Gobbling an apple
             playerScore += 1;
             score.innerText = "score: " + playerScore;
-
-            playerGrowth(currentBoardState, snake.body[snake.body.length - 1]);
-            currentBoardState = updateSnakeLocation(currentBoardState, nextMovement)
+            
+            removeAppleElement();
+            playerGrowth(snake.body[snake.body.length - 1]);
+            currentBoardState = updateSnakeLocation(currentBoardState, nextMovement);
             spawnApple();
         } else {
             // Update the board to clear the head of its previous position
@@ -468,18 +472,21 @@ function checkIfApple(x, y, currentBoardState) {
 }
 
 function updateBoard(x, y, type, currentBoardState) {
+    let updatedBoard;
+    
     currentBoardState[x][y] = type;
-    board = currentBoardState;
-    return board;
+    updatedBoard = currentBoardState;
+
+    return updatedBoard;
 }
 
-function playerGrowth(gameBoard, lastBodyNode) {
+function playerGrowth(lastBodyNode) {
     let nextSnakeNodeCoords = calculateBodyPlacement(lastBodyNode.x, lastBodyNode.y, lastBodyNode.direction); 
     snake.body.push(createSnakeBody(snake.body.length, nextSnakeNodeCoords.x, nextSnakeNodeCoords.y));
 }
 
 function createSnakeHead(gameBoard) {
-    let snakePosition = getSnakeHeadPosition(gameBoard);
+    let snakePosition = getNodePosition(gameBoard, "head");
 
     let snake = {
         head: {
@@ -521,10 +528,12 @@ function createSnakeBody(len, currentX, currentY) {
 }
 
 function createApple() {
+    let applePosition = getNodePosition(gameBoard, "apple");
+
     let apple = {
         element: document.createElement('div'),
-        x: 0,
-        y: 0
+        x: applePosition.x,
+        y: applePosition.y
     }
     
     let appleElement = document.createElement('div');
@@ -537,12 +546,13 @@ function createApple() {
 }
 
 function spawnApple() {
-    // generate a random number for x / y
+    // generate a random number for x / y`
     // check to see if the location is taken by an element
     // if not, place the apple
+    
     let noPlacement = true;
     let x = "";
-    let y = ""
+    let y = "";
 
     while (noPlacement) {
         x = getRandomInt(15);
@@ -550,6 +560,12 @@ function spawnApple() {
 
         if(gameBoard[x][y] == "") {
             gameBoard[x][y] = "apple";
+            
+            apple = createApple();
+            apple.x = x;
+            apple.y = y;
+            drawAppleElement();
+
             noPlacement = false;
         }
     }
@@ -565,6 +581,14 @@ function restartGame() {
 
     // Reset the board
     gameBoard = freshBoard.clone();
+    removeAppleElement();
+
+    apple = createApple();
+    let applePosition = getNodePosition(gameBoard, "apple");
+    apple.x = applePosition.x;
+    apple.y = applePosition.y;
+    
+    drawAppleElement();
     
     snake = createSnakeHead(gameBoard);
     snake.body.push(createSnakeBody(0, snake.head.x, snake.head.y - 1));
@@ -575,10 +599,10 @@ function restartGame() {
     isPlayerDead = false;
 }
 
-function getSnakeHeadPosition(gameBoard) {
+function getNodePosition(gameBoard, type) {
     for (let i = 0; i < 15; i++) {
         for (let j = 0; j < 15; j++) {
-            if (gameBoard[i][j] == 'head') {
+            if (gameBoard[i][j] == type) {
                 return {
                     x: i,
                     y: j
@@ -588,6 +612,18 @@ function getSnakeHeadPosition(gameBoard) {
     }
 
     return null;
+}
+
+function removeAppleElement() {
+    console.log(apple);
+    board.removeChild(apple.element);
+}
+
+function drawAppleElement() {
+    apple.element.style.top = (32 * apple.x) + 'px'
+    apple.element.style.left = (32 * apple.y) + 'px'
+
+    board.append(apple.element);
 }
 
 function calculateBodyPlacement(lastX, lastY, direction) {
