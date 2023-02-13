@@ -7,7 +7,7 @@ let freshBoard = [
     ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-    ['', '', '', '', 'head', '', '', '', '', '', '', '', 'apple', '', ''],
+    ['', '', '', 'body0', 'head', '', '', '', '', '', '', '', 'apple', '', ''],
     ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
@@ -21,11 +21,14 @@ let score = "";
 let debugDisplay = ""
 let debug = false;
 let playerScore = 0;
-let firstMovement = false;
+let firstMovement = true;
 let autoMovementInterval = "";
 let boardDrawInterval = "";
 let playAgain = false;
 let isPlayerDead = false;
+let gameSpeed = 60 / 1000;
+let movementSpeed = 1000 / 5;
+let nextSnakeMovement = "";
 
 Array.prototype.clone = function(){
     return this.map(e => Array.isArray(e) ? e.clone() : e);
@@ -34,6 +37,7 @@ Array.prototype.clone = function(){
 window.addEventListener('load', () => {
     gameBoard = freshBoard.clone();
     snake = createSnakeHead(gameBoard);
+    snake.body.push(createSnakeBody(0, snake.head.x, snake.head.y - 1));
     const game = document.querySelector('.game');
     const board = document.querySelector('.board');
     score = document.querySelector('.score');
@@ -78,7 +82,7 @@ window.addEventListener('load', () => {
     boardDrawInterval = setInterval(() => {
         clearBoard(board);
         drawBoard(gameBoard, board);
-    }, (1 / 60) * 500);
+    }, gameSpeed);
 
 }, false);
     
@@ -230,13 +234,17 @@ function autoMovement(currentBoardState) {
         y: 0
     };
 
+    snake.head.direction = nextSnakeMovement;
+
     switch(snake.head.direction) {
         case 'LEFT': 
             // left
             if (snake.head.direction != "RIGHT") {
                 nextMovement.x = snake.head.x;
                 nextMovement.y = snake.head.y - 1;
-                snake.head.direction = "LEFT";
+
+                if (debug)
+                    console.log("RENDERED MOVEMENT: " + snake.head.direction);
             }
             
         break;
@@ -245,7 +253,9 @@ function autoMovement(currentBoardState) {
             if (snake.head.direction != "LEFT") {
                 nextMovement.x = snake.head.x;
                 nextMovement.y = snake.head.y + 1;
-                snake.head.direction = "RIGHT";
+
+                if (debug)
+                    console.log("RENDERED MOVEMENT: " + snake.head.direction);
             }
         break;
         case 'UP': 
@@ -253,7 +263,9 @@ function autoMovement(currentBoardState) {
             if (snake.head.direction != "DOWN") {
                 nextMovement.x = snake.head.x - 1;
                 nextMovement.y = snake.head.y;
-                snake.head.direction = "UP";
+
+                if (debug)
+                    console.log("RENDERED MOVEMENT: " + snake.head.direction);
             }
         break;
         case 'DOWN': 
@@ -261,7 +273,9 @@ function autoMovement(currentBoardState) {
             if (snake.head.direction != "UP") {
                 nextMovement.x = snake.head.x + 1;
                 nextMovement.y = snake.head.y;
-                snake.head.direction = "DOWN";
+
+                if (debug)
+                    console.log("RENDERED MOVEMENT: " + snake.head.direction);
             }
         break;
     }
@@ -271,7 +285,7 @@ function autoMovement(currentBoardState) {
             // Gobbling an apple
             playerScore += 1;
             score.innerText = "score: " + playerScore;
-            playerGrowth();
+            playerGrowth(currentBoardState, snake.body[snake.body.length - 1]);
             spawnApple();
         }
 
@@ -328,11 +342,11 @@ function autoMovement(currentBoardState) {
 }
 
 function moveSnake(event) {
-    let movementKeyTouched = false;
+    let movement = false;
 
     if (playAgain) {
         playAgain = false;
-        firstMovement = false;
+        firstMovement = true;
     }
 
     // https://stackoverflow.com/a/5597114 -> Keypress values
@@ -340,42 +354,42 @@ function moveSnake(event) {
         case 'ArrowLeft': 
             // left
             if (snake.head.direction != "RIGHT") {
-                snake.head.direction = "LEFT";
-                movementKeyTouched = true;
+                nextSnakeMovement = "LEFT";
+                movement = true;
             }
             
         break;
         case 'ArrowRight': 
             // right
             if (snake.head.direction != "LEFT") {
-                snake.head.direction = "RIGHT";
-                movementKeyTouched = true;
+                nextSnakeMovement = "RIGHT";
+                movement = true;
             }
         break;
         case 'ArrowUp': 
             // up
             if (snake.head.direction != "DOWN") {
-                snake.head.direction = "UP";
-                movementKeyTouched = true;
+                nextSnakeMovement = "UP";
+                movement = true;
             }
+
         break;
         case 'ArrowDown': 
             // down
             if (snake.head.direction != "UP") {
-                snake.head.direction = "DOWN";
-                movementKeyTouched = true;
+                nextSnakeMovement = "DOWN";
+                movement = true;
             }
         break;
     }
 
-    if (movementKeyTouched && !firstMovement) {
-        firstMovement = true;
-
+    if (firstMovement && movement) {
+        firstMovement = false;
         // Trigger the movement on first call, then have calls on a interval
         autoMovement(gameBoard);
         autoMovementInterval = setInterval(() => {
             autoMovement(gameBoard);
-        }, 1 * 200);
+        }, movementSpeed);
     }       
 }
 
@@ -384,6 +398,7 @@ function updateSnakeLocation(currentBoardState, nextMovement) {
     let currentSnakeY = snake.head.y;
     let previousBodyX;
     let previousBodyY;
+    let previousDirection;
 
     snake.head.x = nextMovement.x;
     snake.head.y = nextMovement.y;
@@ -399,14 +414,17 @@ function updateSnakeLocation(currentBoardState, nextMovement) {
             // Store the values
             let currentBodyX = bodyElement.x;
             let currentBodyY = bodyElement.y;
+            let currentDirection = bodyElement.direction
 
             // Override the values
             if (i == 0) {
                 bodyElement.x = currentSankeX;
                 bodyElement.y = currentSnakeY;
+                bodyElement.direction = snake.head.direction;
             } else {
                 bodyElement.x = previousBodyX;
                 bodyElement.y = previousBodyY;
+                bodyElement.direction = previousDirection;
             }
 
             // Add back body node with updated value         
@@ -415,6 +433,7 @@ function updateSnakeLocation(currentBoardState, nextMovement) {
             // Update the previous values
             previousBodyX = currentBodyX;
             previousBodyY = currentBodyY;
+            previousDirection = currentDirection;
         }
     }
     
@@ -452,8 +471,9 @@ function updateBoard(x, y, type, currentBoardState) {
     return board;
 }
 
-function playerGrowth() {
-    snake.body.push(createSnakeBody(snake.body.length));
+function playerGrowth(gameBoard, lastBodyNode) {
+    let nextSnakeNodeCoords = calculateBodyPlacement(lastBodyNode.x, lastBodyNode.y, lastBodyNode.direction); 
+    snake.body.push(createSnakeBody(snake.body.length, nextSnakeNodeCoords.x, nextSnakeNodeCoords.y));
 }
 
 function createSnakeHead(gameBoard) {
@@ -478,13 +498,15 @@ function createSnakeHead(gameBoard) {
     return snake;
 }
 
-function createSnakeBody(len) {
+function createSnakeBody(len, currentX, currentY) {
+    let snakeBodyId = "body" + len;
+
     let snakeBody = {
-        id: "body" + len,
+        id: snakeBodyId,
         element: document.createElement('div'),
         direction: "",
-        x: 0,
-        y: 0
+        x: currentX,
+        y: currentY,
     };
 
     let snakeBodyElement = document.createElement('div');
@@ -542,7 +564,8 @@ function restartGame() {
     // Reset the board
     gameBoard = freshBoard.clone();
     
-    snake = createSnakeHead();
+    snake = createSnakeHead(gameBoard);
+    snake.body.push(createSnakeBody(0, snake.head.x, snake.head.y - 1));
 
     // Reset the score
     playerScore = 0;
@@ -563,4 +586,33 @@ function getSnakeHeadPosition(gameBoard) {
     }
 
     return null;
+}
+
+function calculateBodyPlacement(lastX, lastY, direction) {
+    switch(direction) {
+        case "UP":
+            return {
+                x: lastX + 1,
+                y: lastY 
+            }
+        break;
+        case "DOWN":
+            return {
+                x: lastX - 1,
+                y: lastY 
+            }
+        break;
+        case "RIGHT":
+            return {
+                x: lastX,
+                y: lastY - 1
+            }
+        break;
+        case "LEFT":
+            return {
+                x: lastX,
+                y: lastY + 1
+            }
+        break;
+    }
 }

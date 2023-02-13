@@ -127,7 +127,7 @@ footer span {
     width: 320px;
     height: 480px;
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: rgba(0, 0, 0, 0.5);
     border-radius: 10%;
 }
 

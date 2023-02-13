@@ -10,7 +10,7 @@ working on ---------------------------------
 
 
 bugs ---------------------------------
-- User can press multiple keys at once
+
 
 done ---------------------------------
 - Player board
@@ -28,3 +28,4 @@ done ---------------------------------
 - Body nodes are not getitng drawn properly after a long streaks
 - Game over
 - Refactor - Make snake head placement dynamic
+- User can press multiple keys at once
