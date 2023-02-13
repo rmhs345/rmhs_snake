@@ -213,6 +213,16 @@ function drawBoard(currentBoardState, board) {
                     }
                     let textNode = document.createTextNode("x: " + i + ", y: " + j);
                     appleElement.prepend(textNode);
+                } else {
+                    let appleElement = apple.element.querySelector(".apple");
+                    for (let child in appleElement.childNodes) {
+                        if (appleElement.childNodes.hasOwnProperty(child)) {
+                            child = appleElement.childNodes[child];
+                            if (child.nodeType != 1  && child != undefined) {
+                                appleElement.removeChild(child);
+                            }
+                        }
+                    }
                 }
             }
         }

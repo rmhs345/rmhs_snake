@@ -2,13 +2,18 @@ RMHS Snake
 
 todo ---------------------------------
 - Polish - Change board movement shake to hitting on wall / itself
-- Polish -Sounds effects (Apple, movement, collison)
+- Polish - Sounds effects (Apple, movement, collison)
 - Polish - Highscore saved to cookie
+- Option to change the game speed by a multiplier (Current base is at 6)
+- Option to change the Snake colour
+- Option to change the apple colour
+- Option to change the board colour
+- Option to change the board size
 
 working on ---------------------------------
-- Missing direction on tail (Rare)
 
 bugs ---------------------------------
+- Odd issue with snake body removal (rare)
 
 done ---------------------------------
 - Player board
@@ -21,8 +26,7 @@ done ---------------------------------
 - Automovement
 - Player collision (Wall and itself) [Death]
 - Apple spawn
-- Fix debug display
-    - Nodes and the actual display of the debug board
+- Fix debug display, Nodes and the actual display of the debug board
 - Body nodes are not getitng drawn properly after a long streaks
 - Game over
 - Refactor - Make snake head placement dynamic
