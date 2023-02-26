@@ -125,15 +125,24 @@ function drawBoard(currentBoardState, board) {
         while (debugDisplay.firstChild) {
             debugDisplay.removeChild(debugDisplay.lastChild);
         }
-    }
-    // Iterate through the board
-    for (let i = 0; i < 15; i++) {
-        if (debug) {
+
+        for (let i = 0; i < snake.body.length; i++) {
             let p = document.createElement('p');
-            let textNode = JSON.stringify(currentBoardState[i]);
+            let textNode = document.createTextNode("id: " + i + ", x: " + snake.body[i].x + ", y: " + snake.body[i].y);
+            //let textNode = JSON.stringify(currentBoardState[i]);
             p.append(textNode);
             debugDisplay.append(p); 
         }
+    }
+
+    // Iterate through the board
+    for (let i = 0; i < 15; i++) {
+        //if (debug) {
+            // let p = document.createElement('p');
+            // let textNode = JSON.stringify(currentBoardState[i]);
+            // p.append(textNode);
+            // debugDisplay.append(p); 
+        //}
         
         for (let j = 0; j < 15; j++) {
             // Draw each of the elements to the screen
@@ -165,10 +174,11 @@ function drawBoard(currentBoardState, board) {
                     }
                 }
 
-                snakeHead.style.top = (32 * i) + 'px'
-                snakeHead.style.left = (32 * j) + 'px'
+                snakeHead.style.top = (32 * snake.head.x) + 'px'
+                snakeHead.style.left = (32 * snake.head.y) + 'px'
                 board.append(snakeHead);
             } else if (currentBoardState[i][j].includes('body')) {
+                let test = snake.body[currentBoardState[i][j].substring(4)]
                 let snakeBody = snake.body[currentBoardState[i][j].substring(4)].element;
                 
                 if (debug) {
@@ -196,8 +206,8 @@ function drawBoard(currentBoardState, board) {
                     }
                 }
 
-                snakeBody.style.top = (32 * i) + 'px'
-                snakeBody.style.left = (32 * j) + 'px'
+                snakeBody.style.top = (32 * test.x) + 'px'
+                snakeBody.style.left = (32 * test.y) + 'px'
                 board.append(snakeBody);
             } else if (currentBoardState[i][j] == 'apple') {
                 if (debug) {
@@ -427,8 +437,14 @@ function updateSnakeLocation(currentBoardState, nextMovement) {
             let bodyElement = snake.body[i];
             
             // Remove body node from board
-            currentBoardState = updateBoard(bodyElement.x, bodyElement.y, "", currentBoardState);
-
+            //currentBoardState = updateBoard(bodyElement.x, bodyElement.y, "", currentBoardState);
+            try {
+                currentBoardState = updateBoard(bodyElement.x, bodyElement.y, "", currentBoardState);
+            } catch (error) {
+                console.log(i - 1, snake.body[i - 1], snake.body[i - 1].x, snake.body[i - 1].y);
+                console.log(i, bodyElement, bodyElement.x, bodyElement.y);
+            }
+            
             // Store the values
             let currentBodyX = bodyElement.x;
             let currentBodyY = bodyElement.y;
@@ -485,7 +501,7 @@ function checkIfApple(x, y, currentBoardState) {
 
 function updateBoard(x, y, type, currentBoardState) {
     let updatedBoard;
-    
+
     currentBoardState[x][y] = type;
     updatedBoard = currentBoardState;
 
@@ -493,7 +509,10 @@ function updateBoard(x, y, type, currentBoardState) {
 }
 
 function playerGrowth(lastBodyNode) {
-    let nextSnakeNodeCoords = calculateBodyPlacement(lastBodyNode.x, lastBodyNode.y, lastBodyNode.direction); 
+    let nextSnakeNodeCoords = calculateBodyPlacement(lastBodyNode.x, lastBodyNode.y, lastBodyNode.direction);
+    if (nextSnakeNodeCoords.x < 0) {
+        console.log(lastBodyNode, nextSnakeNodeCoords);
+    } 
     snake.body.push(createSnakeBody(snake.body.length, nextSnakeNodeCoords.x, nextSnakeNodeCoords.y));
 }
 
@@ -570,15 +589,22 @@ function spawnApple() {
         x = getRandomInt(15);
         y = getRandomInt(15);
 
+        // Check board
         if(gameBoard[x][y] == "") {
-            gameBoard[x][y] = "apple";
+            // Check nodes
+            //if(!nodeCoordCollision(x, y)) {
+                gameBoard[x][y] = "apple";
             
-            apple = createApple();
-            apple.x = x;
-            apple.y = y;
-            drawAppleElement();
+                apple = createApple();
+                if (debug) {
+                    console.log("APPLE SPAWNED: " + "x: " +  x + ", y: " + y);
+                } 
+                apple.x = x;
+                apple.y = y;
+                drawAppleElement();
 
-            noPlacement = false;
+                noPlacement = false;
+            //}
         }
     }
 }
@@ -637,30 +663,48 @@ function drawAppleElement() {
     board.append(apple.element);
 }
 
+function nodeCoordCollision(x, y) {
+    if (snake.head.x == x && snake.head.y == y) {
+        return true;
+    }
+
+    for (let i = 0; i < snake.body.length; i++) {
+        if (snake.body[i].x == x && snake.body[i].y == y) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function calculateBodyPlacement(lastX, lastY, direction) {
     switch(direction) {
         case "UP":
+            lastX += 1;
             return {
-                x: lastX + 1,
+                x: lastX,
                 y: lastY 
             }
         break;
         case "DOWN":
+            lastX -= 1;
             return {
-                x: lastX - 1,
+                x: lastX,
                 y: lastY 
             }
         break;
         case "RIGHT":
+            lastY -= 1;
             return {
                 x: lastX,
-                y: lastY - 1
+                y: lastY
             }
         break;
         case "LEFT":
+            lastY += 1;
             return {
                 x: lastX,
-                y: lastY + 1
+                y: lastY
             }
         break;
     }

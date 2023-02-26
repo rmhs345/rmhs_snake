@@ -13,7 +13,7 @@ todo ---------------------------------
 working on ---------------------------------
 
 bugs ---------------------------------
-- Odd issue with snake body removal (rare)
+- Apple spawning on tail node (Rare) (Believe its an issue with coords)
 
 done ---------------------------------
 - Player board
@@ -31,5 +31,4 @@ done ---------------------------------
 - Game over
 - Refactor - Make snake head placement dynamic
 - User can press multiple keys at once
-- Apple spawning on tail node (Rare)
 - Polish -Adding effects to the apple (Twist or lerp animation)
